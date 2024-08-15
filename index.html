@@ -14,11 +14,29 @@
         header {
             background-color: #333;
             color: white;
-            padding: 10px 20px;
+            padding: 15px 20px;
             text-align: center;
         }
         .container {
             padding: 20px;
+        }
+        .search-box {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .search-box select {
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
         .project-list {
             display: grid;
@@ -30,6 +48,7 @@
             padding: 15px;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
         .project-item h3 {
             margin: 0;
@@ -41,18 +60,53 @@
             margin: 0;
             color: #666;
         }
-        .search-box {
-            margin-bottom: 20px;
+        .project-item button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
         }
-        .search-box input {
+        .project-item button.favorite {
+            background-color: #FF5722;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 10px;
-            font-size: 1em;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
             border-radius: 5px;
-            border: 1px solid #ccc;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal-content h3 {
+            margin-top: 0;
+        }
+        .modal-close {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 15px;
         }
         @media (max-width: 600px) {
-            header, .project-item {
+            header, .project-item, .modal-content {
                 padding: 10px;
             }
         }
@@ -67,45 +121,117 @@
 <div class="container">
     <div class="search-box">
         <input type="text" id="search" placeholder="Search projects...">
+        <select id="categoryFilter">
+            <option value="">All Categories</option>
+            <option value="Woodworking">Woodworking</option>
+            <option value="Gardening">Gardening</option>
+            <option value="Crafts">Crafts</option>
+            <option value="Recycling">Recycling</option>
+        </select>
     </div>
     <div class="project-list" id="projectList">
-        <div class="project-item" data-title="Wooden Bookshelf">
+        <div class="project-item" data-title="Wooden Bookshelf" data-category="Woodworking">
             <h3>Wooden Bookshelf</h3>
             <p>Create a sturdy wooden bookshelf with basic tools.</p>
+            <button class="details">Details</button>
         </div>
-        <div class="project-item" data-title="Garden Planter">
+        <div class="project-item" data-title="Garden Planter" data-category="Gardening">
             <h3>Garden Planter</h3>
             <p>Build a simple garden planter for your home garden.</p>
+            <button class="details">Details</button>
         </div>
-        <div class="project-item" data-title="Handmade Candles">
+        <div class="project-item" data-title="Handmade Candles" data-category="Crafts">
             <h3>Handmade Candles</h3>
             <p>Make beautiful handmade candles with natural ingredients.</p>
+            <button class="details">Details</button>
         </div>
-        <div class="project-item" data-title="Wall Art">
+        <div class="project-item" data-title="Wall Art" data-category="Crafts">
             <h3>Wall Art</h3>
             <p>Create unique wall art using paint and canvas.</p>
+            <button class="details">Details</button>
         </div>
-        <div class="project-item" data-title="Recycled Lamp">
+        <div class="project-item" data-title="Recycled Lamp" data-category="Recycling">
             <h3>Recycled Lamp</h3>
             <p>Turn old materials into a stylish recycled lamp.</p>
+            <button class="details">Details</button>
         </div>
+        <div class="project-item" data-title="Wooden Table" data-category="Woodworking">
+            <h3>Wooden Table</h3>
+            <p>Build a beautiful wooden table for your dining room.</p>
+            <button class="details">Details</button>
+        </div>
+        <div class="project-item" data-title="Vertical Garden" data-category="Gardening">
+            <h3>Vertical Garden</h3>
+            <p>Create a vertical garden to save space and grow plants.</p>
+            <button class="details">Details</button>
+        </div>
+        <div class="project-item" data-title="DIY Tote Bag" data-category="Crafts">
+            <h3>DIY Tote Bag</h3>
+            <p>Make your own tote bag with recycled fabric.</p>
+            <button class="details">Details</button>
+        </div>
+        <div class="project-item" data-title="Pallet Furniture" data-category="Recycling">
+            <h3>Pallet Furniture</h3>
+            <p>Create furniture using old pallets.</p>
+            <button class="details">Details</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="projectModal">
+    <div class="modal-content">
+        <h3 id="modalTitle">Project Title</h3>
+        <p id="modalDescription">Project Description</p>
+        <button class="modal-close">Close</button>
     </div>
 </div>
 
 <script>
     document.getElementById('search').addEventListener('input', function() {
         let searchTerm = this.value.toLowerCase();
+        filterProjects(searchTerm, document.getElementById('categoryFilter').value);
+    });
+
+    document.getElementById('categoryFilter').addEventListener('change', function() {
+        filterProjects(document.getElementById('search').value.toLowerCase(), this.value);
+    });
+
+    function filterProjects(searchTerm, category) {
         let projects = document.querySelectorAll('.project-item');
         
         projects.forEach(function(project) {
             let title = project.getAttribute('data-title').toLowerCase();
-            if (title.includes(searchTerm)) {
+            let projectCategory = project.getAttribute('data-category');
+            if ((title.includes(searchTerm) || searchTerm === '') && (projectCategory === category || category === '')) {
                 project.style.display = 'block';
             } else {
                 project.style.display = 'none';
             }
         });
+    }
+
+    let modal = document.getElementById('projectModal');
+    let modalTitle = document.getElementById('modalTitle');
+    let modalDescription = document.getElementById('modalDescription');
+
+    document.querySelectorAll('.details').forEach(function(button) {
+        button.addEventListener('click', function() {
+            let projectItem = this.closest('.project-item');
+            modalTitle.textContent = projectItem.querySelector('h3').textContent;
+            modalDescription.textContent = projectItem.querySelector('p').textContent;
+            modal.style.display = 'flex';
+        });
     });
+
+    document.querySelector('.modal-close').addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
 </script>
 
 </body>
