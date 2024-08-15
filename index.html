@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIY Projects</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+        }
+        .project-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .project-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .project-item h3 {
+            margin: 0;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            color: #333;
+        }
+        .project-item p {
+            margin: 0;
+            color: #666;
+        }
+        .search-box {
+            margin-bottom: 20px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        @media (max-width: 600px) {
+            header, .project-item {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>DIY Projects</h1>
+</header>
+
+<div class="container">
+    <div class="search-box">
+        <input type="text" id="search" placeholder="Search projects...">
+    </div>
+    <div class="project-list" id="projectList">
+        <div class="project-item" data-title="Wooden Bookshelf">
+            <h3>Wooden Bookshelf</h3>
+            <p>Create a sturdy wooden bookshelf with basic tools.</p>
+        </div>
+        <div class="project-item" data-title="Garden Planter">
+            <h3>Garden Planter</h3>
+            <p>Build a simple garden planter for your home garden.</p>
+        </div>
+        <div class="project-item" data-title="Handmade Candles">
+            <h3>Handmade Candles</h3>
+            <p>Make beautiful handmade candles with natural ingredients.</p>
+        </div>
+        <div class="project-item" data-title="Wall Art">
+            <h3>Wall Art</h3>
+            <p>Create unique wall art using paint and canvas.</p>
+        </div>
+        <div class="project-item" data-title="Recycled Lamp">
+            <h3>Recycled Lamp</h3>
+            <p>Turn old materials into a stylish recycled lamp.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('search').addEventListener('input', function() {
+        let searchTerm = this.value.toLowerCase();
+        let projects = document.querySelectorAll('.project-item');
+        
+        projects.forEach(function(project) {
+            let title = project.getAttribute('data-title').toLowerCase();
+            if (title.includes(searchTerm)) {
+                project.style.display = 'block';
+            } else {
+                project.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
