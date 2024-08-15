@@ -9,6 +9,11 @@ This is a simple DIY Projects website where users can explore various do-it-your
 - **Project Details Modal:** Clicking on the "Details" button opens a modal displaying a detailed step-by-step process for each project.
 - **Responsive Design:** The website is fully responsive, ensuring it looks great on all devices.
 
+## Live demo
+
+for live website visit -  https://chandranshulg.github.io/DIY-/
+
+
 ## Project List
 
 - **Wooden Bookshelf:** Create a sturdy wooden bookshelf with basic tools. Detailed steps include measuring, cutting, assembling, and finishing.
