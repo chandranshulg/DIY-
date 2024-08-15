@@ -89,7 +89,7 @@
             background-color: white;
             padding: 20px;
             border-radius: 5px;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
             text-align: center;
         }
@@ -130,6 +130,7 @@
         </select>
     </div>
     <div class="project-list" id="projectList">
+        <!-- Project Items -->
         <div class="project-item" data-title="Wooden Bookshelf" data-category="Woodworking">
             <h3>Wooden Bookshelf</h3>
             <p>Create a sturdy wooden bookshelf with basic tools.</p>
@@ -175,6 +176,21 @@
             <p>Create furniture using old pallets.</p>
             <button class="details">Details</button>
         </div>
+        <div class="project-item" data-title="Macramé Plant Hanger" data-category="Crafts">
+            <h3>Macramé Plant Hanger</h3>
+            <p>Craft a stylish macramé plant hanger for your home.</p>
+            <button class="details">Details</button>
+        </div>
+        <div class="project-item" data-title="Concrete Planters" data-category="Gardening">
+            <h3>Concrete Planters</h3>
+            <p>Create modern concrete planters for your garden.</p>
+            <button class="details">Details</button>
+        </div>
+        <div class="project-item" data-title="Rustic Coffee Table" data-category="Woodworking">
+            <h3>Rustic Coffee Table</h3>
+            <p>Build a rustic coffee table with a vintage look.</p>
+            <button class="details">Details</button>
+        </div>
     </div>
 </div>
 
@@ -182,11 +198,123 @@
     <div class="modal-content">
         <h3 id="modalTitle">Project Title</h3>
         <p id="modalDescription">Project Description</p>
+        <div id="modalSteps"></div>
         <button class="modal-close">Close</button>
     </div>
 </div>
 
 <script>
+    const projectData = {
+        'Wooden Bookshelf': {
+            description: 'Create a sturdy wooden bookshelf with basic tools.',
+            steps: [
+                'Measure and cut the wood pieces according to the dimensions.',
+                'Assemble the bookshelf using screws and wood glue.',
+                'Sand the surfaces and paint or stain as desired.',
+                'Allow it to dry before placing books on it.'
+            ]
+        },
+        'Garden Planter': {
+            description: 'Build a simple garden planter for your home garden.',
+            steps: [
+                'Cut the wood or use pre-made planters.',
+                'Assemble the planter using nails or screws.',
+                'Fill with soil and plant your favorite flowers or vegetables.',
+                'Water regularly and enjoy your garden.'
+            ]
+        },
+        'Handmade Candles': {
+            description: 'Make beautiful handmade candles with natural ingredients.',
+            steps: [
+                'Melt wax in a double boiler.',
+                'Add essential oils and color as desired.',
+                'Pour the melted wax into molds with wicks.',
+                'Let the candles cool and harden before removing from molds.'
+            ]
+        },
+        'Wall Art': {
+            description: 'Create unique wall art using paint and canvas.',
+            steps: [
+                'Choose your canvas and paint colors.',
+                'Sketch your design on the canvas.',
+                'Paint your design with brush strokes or sponges.',
+                'Allow it to dry and hang it on your wall.'
+            ]
+        },
+        'Recycled Lamp': {
+            description: 'Turn old materials into a stylish recycled lamp.',
+            steps: [
+                'Gather old materials like bottles or cans.',
+                'Clean and prepare the materials.',
+                'Assemble the lamp using a lamp kit and your recycled materials.',
+                'Attach a lampshade and light bulb.'
+            ]
+        },
+        'Wooden Table': {
+            description: 'Build a beautiful wooden table for your dining room.',
+            steps: [
+                'Cut the wood to size for the table top and legs.',
+                'Assemble the table using screws and wood glue.',
+                'Sand and finish the table with paint or stain.',
+                'Allow it to dry and place it in your dining room.'
+            ]
+        },
+        'Vertical Garden': {
+            description: 'Create a vertical garden to save space and grow plants.',
+            steps: [
+                'Select a wall or vertical surface for your garden.',
+                'Install planters or pockets for plants.',
+                'Fill with soil and plant your selected plants.',
+                'Water and maintain your vertical garden regularly.'
+            ]
+        },
+        'DIY Tote Bag': {
+            description: 'Make your own tote bag with recycled fabric.',
+            steps: [
+                'Cut fabric into desired shapes for the bag and handles.',
+                'Sew the pieces together using a sewing machine.',
+                'Turn the bag right side out and press flat.',
+                'Add any desired embellishments.'
+            ]
+        },
+        'Pallet Furniture': {
+            description: 'Create furniture using old pallets.',
+            steps: [
+                'Disassemble the pallets and sand the wood.',
+                'Assemble the wood into furniture pieces like tables or chairs.',
+                'Paint or stain as desired.',
+                'Allow it to dry and use your new furniture.'
+            ]
+        },
+        'Macramé Plant Hanger': {
+            description: 'Craft a stylish macramé plant hanger for your home.',
+            steps: [
+                'Cut macramé cord into lengths for knotting.',
+                'Create knots and patterns according to your design.',
+                'Attach a ring or hook to the top of the hanger.',
+                'Add a plant and hang it in your desired location.'
+            ]
+        },
+        'Concrete Planters': {
+            description: 'Create modern concrete planters for your garden.',
+            steps: [
+                'Mix concrete according to package instructions.',
+                'Pour into molds and let it set.',
+                'Remove from molds and sand the edges.',
+                'Paint or seal as desired before adding plants.'
+            ]
+        },
+        'Rustic Coffee Table': {
+            description: 'Build a rustic coffee table with a vintage look.',
+            steps: [
+                'Cut wood pieces to size for the tabletop and legs.',
+                'Assemble using screws and wood glue.',
+                'Distress the wood for a rustic look.',
+                'Finish with paint or stain and allow to dry.'
+            ]
+        }
+    };
+
     document.getElementById('search').addEventListener('input', function() {
         let searchTerm = this.value.toLowerCase();
         filterProjects(searchTerm, document.getElementById('categoryFilter').value);
@@ -213,12 +341,20 @@
     let modal = document.getElementById('projectModal');
     let modalTitle = document.getElementById('modalTitle');
     let modalDescription = document.getElementById('modalDescription');
+    let modalSteps = document.getElementById('modalSteps');
 
     document.querySelectorAll('.details').forEach(function(button) {
         button.addEventListener('click', function() {
             let projectItem = this.closest('.project-item');
-            modalTitle.textContent = projectItem.querySelector('h3').textContent;
-            modalDescription.textContent = projectItem.querySelector('p').textContent;
+            let title = projectItem.getAttribute('data-title');
+            let project = projectData[title];
+            
+            modalTitle.textContent = title;
+            modalDescription.textContent = project.description;
+            modalSteps.innerHTML = '<h4>Steps:</h4><ul>' +
+                project.steps.map(step => `<li>${step}</li>`).join('') +
+                '</ul>';
+            
             modal.style.display = 'flex';
         });
     });
